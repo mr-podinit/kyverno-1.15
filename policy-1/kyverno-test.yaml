@@ -1,0 +1,55 @@
+apiVersion: cli.kyverno.io/v1alpha1
+kind: Test
+metadata:
+  name: disallow-latest-tag-test
+policies:
+  - disallow-latest-tag.yaml
+resources:
+  # Pod test resources
+  - pod-ok.yaml
+  - pod-latest-ko.yaml
+  - pod-none-ko.yaml
+results:
+  # Test 1: Pod with proper tag (nginx:1) - should PASS
+  - policy: disallow-latest-tag
+    rule: require-image-tag
+    resources:
+      - nginx-pod-ok
+    kind: Pod
+    result: pass
+  - policy: disallow-latest-tag
+    rule: validate-image-tag
+    resources:
+      - nginx-pod-ok
+    kind: Pod
+    result: pass
+  
+  
+  # Test 2: Pod with :latest tag  
+  - policy: disallow-latest-tag
+    rule: require-image-tag
+    resources:
+      - nginx-pod-latest
+    kind: Pod
+    result: pass
+  - policy: disallow-latest-tag
+    rule: validate-image-tag
+    resources:
+      - nginx-pod-latest
+    kind: Pod
+    result: fail
+
+
+  # Test 3: Pod without tag
+  - policy: disallow-latest-tag
+    rule: require-image-tag
+    resources:
+      - nginx-pod-none
+    kind: Pod
+    result: fail
+  - policy: disallow-latest-tag
+    rule: validate-image-tag
+    resources:
+      - nginx-pod-none
+    kind: Pod
+    result: pass

@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: java
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: java21-app
+  template:
+    metadata:
+      labels:
+        app: java21-app
+      annotations:
+        podinit.ch/inject-pem-certs: /etc/pem-certs
+        podinit.ch/inject-jks-certs: /etc/jks-certs
+    spec:
+      containers:
+        - name: java21
+          imagePullPolicy: IfNotPresent
+          image: eclipse-temurin:21-jdk
+          command: ["sleep", "infinity"]

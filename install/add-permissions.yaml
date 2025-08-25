@@ -1,0 +1,24 @@
+admissionController:
+  enabled: true
+  replicas: 1
+
+backgroundController:
+  enabled: true
+  rbac:
+    clusterRole:
+      extraResources:
+      - apiGroups: ["apps"]
+        resources: ["deployments"]
+        verbs: ["get", "list", "watch", "create", "update", "patch"]
+
+cleanupController:
+  enabled: true
+
+metricsService:
+  enabled: true
+
+webhooksCleanup:
+  enabled: true
+
+config:
+  excludeGroups: []

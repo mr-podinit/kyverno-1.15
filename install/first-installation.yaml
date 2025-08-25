@@ -1,0 +1,16 @@
+admissionController:
+  enabled: true
+  replicas: 1
+
+backgroundController:
+  enabled: true
+
+cleanupController:
+  enabled: true
+
+metricsService:
+  enabled: true
+
+webhooksCleanup:
+  enabled: true
+

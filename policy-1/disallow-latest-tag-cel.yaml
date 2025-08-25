@@ -1,0 +1,43 @@
+apiVersion: policies.kyverno.io/v1alpha1
+kind: ValidatingPolicy
+metadata:
+  name: disallow-latest-tag
+  annotations:
+    policies.kyverno.io/title: Disallow Latest Tag
+    policies.kyverno.io/category: Best Practices
+    policies.kyverno.io/minversion: 1.6.0
+    policies.kyverno.io/severity: medium
+    policies.kyverno.io/subject: Pod
+    policies.kyverno.io/description: >-
+      The ':latest' tag is mutable and can lead to unexpected errors if the
+      image changes. A best practice is to use an immutable tag that maps to
+      a specific version of an application Pod. This policy validates that the image
+      specifies a tag and that it is not called `latest`.
+spec:
+  autogen:
+    validatingAdmissionPolicy:
+      enabled: false
+    podControllers: 
+      controllers: []
+  validationActions:
+    - Deny
+  matchConstraints:
+    resourceRules:
+    - apiGroups:   [""]
+      apiVersions: [v1]
+      operations:  [CREATE, UPDATE]
+      resources:   [pods]
+  validations:
+    - message: "An image tag is required in container[].image."
+      expression: "!has(object.spec.containers) || object.spec.containers.all(container, container.image.matches('^.*:.*$'))"
+    - message: "An image tag is required in initContainer[].image."
+      expression: "!has(object.spec.initContainers) || object.spec.initContainers.all(container, !container.image.matches('^.*:.*$'))"
+    - message: "An image tag is required in ephemeralContainer[].image."
+      expression: "!has(object.spec.ephemeralContainers) || object.spec.ephemeralContainers.all(container, !container.image.matches('^.*:.*$'))"
+
+    - message: "Using a mutable image tag e.g. 'latest' is not allowed in container[].image."
+      expression: "!has(object.spec.containers) || object.spec.containers.all(container, !container.image.matches('.*:latest$'))"
+    - message: "Using a mutable image tag e.g. 'latest' is not allowed in initContainer[].image."
+      expression: "!has(object.spec.initContainers) || object.spec.initContainers.all(container, !container.image.matches('.*:latest$'))"
+    - message: "Using a mutable image tag e.g. 'latest' is not allowed in ephemeralContainers[].image."
+      expression: "!has(object.spec.ephemeralContainers) || object.spec.ephemeralContainers.all(container, !container.image.matches('.*:latest$'))"

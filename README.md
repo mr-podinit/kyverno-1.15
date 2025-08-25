@@ -1,6 +1,6 @@
 # Introduction
 
-This repository contains all the files used during the Youtube video about Kyverno 1.15.
+This repository contains all the files used during the Youtube video about Kyverno 1.15 (https://youtu.be/r9u1VSxhuAc)
 
 > **Note:** All commands are for demonstration purposes. Adjust them according to your OS and environment.
 
